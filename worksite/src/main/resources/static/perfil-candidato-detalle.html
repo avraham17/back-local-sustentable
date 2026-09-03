@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil de candidato - WorkSite</title>
+  <link rel="stylesheet" href="css/estadisticas.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">WorkSite</div>
+  <nav>
+    <a href="inicio 2.html" class="nav-link">Inicio</a>
+    <div class="menu-item" id="menuEstadisticas">
+      <a href="estadisticas.html" class="nav-link">📊 Estadísticas</a>
+    </div>
+    <div class="menu-item">
+      <a href="#" class="nav-link">
+        <div class="avatar" id="avatarInicial"></div>
+        <span class="arrow">▾</span>
+      </a>
+      <div class="submenu">
+        <a href="perfil.html"><span>👤</span> Mi perfil</a>
+        <a href="configuracion.html"><span>⚙️</span> Configuración</a>
+        <div class="divider-nav"></div>
+        <a id="botonCerrarSesion" class="danger"><span>🚪</span> Cerrar sesión</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="hero-banner">
+  <div class="hero-overlay">
+    <h1>🙋 Perfil del candidato</h1>
+    <p>Vista de administrador</p>
+  </div>
+</div>
+
+<main class="container">
+
+  <a href="estadisticas.html" class="est-btn-ver" style="display:inline-block; margin-bottom:20px;">← Volver a Estadísticas</a>
+
+  <div id="estadoCargando" class="est-empty-state">
+    <div class="est-empty-icon">⏳</div>
+    <p>Cargando perfil...</p>
+  </div>
+
+  <div id="estadoError" class="est-empty-state" style="display:none;">
+    <div class="est-empty-icon">🚫</div>
+    <p>No se pudo cargar el perfil del candidato.</p>
+  </div>
+
+  <section id="contenidoPerfil" class="est-tabla-card" style="display:none; max-width:700px; margin:0 auto;">
+    <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
+      <img id="fotoCandidato" src="" alt="Foto de perfil" style="width:90px; height:90px; border-radius:50%; object-fit:cover; background:#eee; display:none;">
+      <div>
+        <h2 id="nombreCandidato" style="margin:0;"></h2>
+        <p id="cargoCandidato" style="margin:4px 0 0; color:#666;"></p>
+      </div>
+    </div>
+
+    <table class="est-tabla">
+      <tbody>
+        <tr><td><strong>Correo</strong></td><td id="correoCandidato"></td></tr>
+        <tr><td><strong>Teléfono</strong></td><td id="telefonoCandidato"></td></tr>
+        <tr><td><strong>Ciudad</strong></td><td id="ciudadCandidato"></td></tr>
+        <tr><td><strong>Estudios</strong></td><td id="estudioCandidato"></td></tr>
+        <tr><td><strong>Años de experiencia</strong></td><td id="experienciaCandidato"></td></tr>
+        <tr><td><strong>Descripción</strong></td><td id="descripcionCandidato"></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 WorkSite | Todos los derechos reservados
+</footer>
+
+<script src="js/auth-guard.js"></script>
+<script>
+    requireAuth(["ADMIN"]);
+</script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="js/core.js"></script>
+<script>
+  $(document).ready(function () {
+    var idCandidato = new URLSearchParams(window.location.search).get("id");
+
+    if (!idCandidato) {
+      mostrarError();
+      return;
+    }
+
+    callApi(
+      API_BASE_URL + "/api/admin/candidatos/" + idCandidato,
+      "GET",
+      null,
+      function (response) {
+        renderCandidato(response);
+      },
+      function (error) {
+        console.error("Error al cargar el candidato:", error);
+        mostrarError();
+      }
+    );
+  });
+
+  function renderCandidato(c) {
+    document.getElementById("nombreCandidato").textContent = (c.nombres || "") + " " + (c.apellidos || "");
+    document.getElementById("cargoCandidato").textContent = c.cargo || "Sin cargo especificado";
+    document.getElementById("correoCandidato").textContent = c.correoElectronico || "-";
+    document.getElementById("telefonoCandidato").textContent = c.numeroTelefonico || "-";
+    document.getElementById("ciudadCandidato").textContent = c.ciudad || "-";
+    document.getElementById("estudioCandidato").textContent = c.estudio || "-";
+    document.getElementById("experienciaCandidato").textContent = c.anosExperiencia || "-";
+    document.getElementById("descripcionCandidato").textContent = c.descripcion || "-";
+
+    if (c.foto) {
+      var img = document.getElementById("fotoCandidato");
+      img.src = c.foto;
+      img.style.display = "block";
+    }
+
+    document.getElementById("estadoCargando").style.display = "none";
+    document.getElementById("contenidoPerfil").style.display = "block";
+  }
+
+  function mostrarError() {
+    document.getElementById("estadoCargando").style.display = "none";
+    document.getElementById("estadoError").style.display = "block";
+  }
+</script>
+
+</body>
+</html>

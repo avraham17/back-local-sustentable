@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil Empresa - WorkSite</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/perfil.css">
+</head>
+<body>
+<header>
+  <div class="logo">WorkSite</div>
+  <nav>
+    <a href="inicio 2.html" class="nav-link">Inicio</a>
+    <div class="menu-item">
+      <a href="#" class="nav-link">Ofertas <span class="arrow">▾</span></a>
+      <div class="submenu">
+        <a href="crear-oferta.html" id="linkPublicarOferta"><span>📢</span> Publicar oferta</a>
+        <a href="vacantes.html" id="linkVerVacantes"><span>💼</span> Ver vacantes</a>
+      </div>
+    </div>
+    <div class="menu-item" id="menuEmpresas">
+      <a href="#" class="nav-link">Empresas <span class="arrow">▾</span></a>
+      <div class="submenu">
+        <a href="perfil-empresa.html"><span>🏢</span> Perfil empresarial</a>
+        <a href="#"><span>🛠</span> Productos y servicios</a>
+      </div>
+    </div>
+    <div class="menu-item">
+      <a href="nosotros.html" class="nav-link">Acerca de nosotros <span class="arrow">▾</span></a>
+    </div>
+     <div class="menu-item" id="menuEstadisticas">
+      <a href="estadisticas.html" class="nav-link">📊 Estadísticas</a>
+    </div>
+    <div class="menu-item">
+      <a href="#" class="nav-link">
+        <div class="avatar" id="avatarInicial"></div>
+        <span class="arrow">▾</span>
+      </a>
+      <div class="submenu">
+        <a href="perfil.html"><span>👤</span> Mi perfil</a>
+        <a href="configuracion.html"><span>⚙️</span> Configuración</a>
+        <div class="divider-nav"></div>
+        <a id="botonCerrarSesion" class="danger"><span>🚪</span> Cerrar sesión</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+
+<div class="hero-banner">
+  <div class="hero-overlay">
+    <h1>Perfil Empresarial</h1>
+    <p>Administra y detalla tu información</p>
+  </div>
+</div>
+
+<main class="container">
+
+  <div class="card">
+    <div class="foto-perfil-row">
+      <img src="assets/mm.avif" alt="Foto de perfil" class="foto-mini" id="fotoPreview">
+      <div>
+        <p class="foto-nombre" id="nombreMostrar">Nombre de la empresa</p>
+        <p class="foto-cargo" id="cargoMostrar">Sector empresarial</p>
+        <label class="btn-foto" for="inputFoto">📷 Cambiar foto</label>
+        <input type="file" id="inputFoto" accept="image/*" style="display:none" onchange="previewFoto(event)">
+      </div>
+    </div>
+  </div>
+
+  <section class="datos">
+    <h2 style="color:#07286f; margin-bottom:15px;">Información de la empresa</h2>
+    <div class="datos-grid">
+      <div class="item"><strong>Nombre de la empresa:</strong><br><span id="mostrarNombre">—</span></div>
+      <div class="item"><strong>Ubicación:</strong><br><span id="mostrarUbicacion">—</span></div>
+      <div class="item"><strong>Sector:</strong><br><span id="mostrarSector">—</span></div>
+      <div class="item"><strong>Teléfono:</strong><br><span id="mostrarTelefono">—</span></div>
+      <div class="item"><strong>Correo electrónico:</strong><br><span id="mostrarCorreo">—</span></div>
+    </div>
+
+    <div class="acciones">
+      <button class="secundario" id="btneditar" title="Cambiar los datos de tu empresa">✏️ Editar perfil</button>
+      <button class="danger" id="btneliminar" title="Eliminar tu perfil de forma permanente">🗑️ Eliminar perfil</button>
+    </div>
+  </section>
+
+  <br>
+
+  <section class="datos" id="seccionMisOfertas">
+    <h2 style="color:#07286f; margin-bottom:15px;">Mis ofertas publicadas</h2>
+    <div id="listaOfertasEmpresa" class="datos-grid"></div>
+    <p id="sinOfertas" style="display:none; color:#777;">Aún no has publicado ninguna oferta.</p>
+  </section>
+
+</main>
+
+<!-- Modal: editar perfil -->
+<div class="modal fade" id="modalEditar" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Editar Perfil</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p style="color:#777; font-size:13px; margin-bottom:16px;">Los campos ya están cargados con tu información actual. Solo cambia lo que necesites.</p>
+
+        <label class="form-label" for="editNombre">Nombre de la empresa</label>
+        <input type="text" id="editNombre" class="form-control mb-3" placeholder="Ej: Tecnologías Andina S.A.S">
+
+        <label class="form-label" for="editCorreo">Correo electrónico</label>
+        <input type="email" id="editCorreo" class="form-control mb-3" placeholder="Ej: contacto@empresa.com">
+
+        <label class="form-label" for="editUbicacion">Ubicación</label>
+        <input type="text" id="editUbicacion" class="form-control mb-3" placeholder="Ej: Cali, Colombia">
+
+        <label class="form-label" for="editTelefono">Teléfono</label>
+        <input type="tel" id="editTelefono" class="form-control mb-3" placeholder="Ej: 3001234567">
+
+        <label class="form-label" for="editSector">Sector</label>
+        <input type="text" id="editSector" class="form-control mb-2" placeholder="Ej: Tecnología, Educación...">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="guardarCambios">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: confirmar eliminación (reemplaza el confirm() nativo) -->
+<div class="modal fade" id="modalConfirmarEliminar" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">¿Eliminar tu perfil?</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p>Esta acción no se puede deshacer. Se eliminará tu perfil de empresa y perderás el acceso a tus ofertas publicadas.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalPostulantes" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalPostulantesTitulo">Postulantes</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="listaPostulantes">
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2026 WorkSite | Todos los derechos reservados
+</footer>
+
+<script src="js/auth-guard.js"></script>
+<script>
+requireAuth(["EMPRESA", "ADMIN"]);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+  crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="js/core.js"></script>
+<script src="js/perfil-empresa.js"></script>
+
+</body>
+</html>

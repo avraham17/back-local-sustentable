@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro - WorkSite</title>
+<link rel="stylesheet" href="css/registro.css">
+</head>
+<body>
+
+<div class="registro-container">
+    <div class="header">
+        <h1>WorkSite</h1>
+        <p>Crea tu perfil </p>
+    </div>
+
+    <form id="formRegistro" action="inicio 2.html" >
+        <div class="grid">
+            <div>
+                <label>Nombres</label>
+                 <input type="text" id="nombre" name="nombre" required>
+            </div>
+
+            <div>
+                <label>Apellidos</label>
+               <input type="text" id="Apellido" name="Apellido" required>
+            </div>
+
+            <div>
+                <label>Correo electrónico</label>
+               <input type="email" id="correo" name="correo" autocomplete="username email" required>
+            </div>
+
+            <div>
+                <label>Teléfono</label>
+                <input type="text" id="telefono" name="telefono" required>
+            </div>
+
+            <div>
+                 <label for="tipoDocumento">Tipo de Documento:</label>
+             <select id="tipoDocumento" name="tipoDocumento" required>
+                <option value="">Seleccione una opción</option>
+                <option value="CC">Cédula de Ciudadanía</option>
+                <option value="CE">Cédula de Extranjería</option> 
+             </select>
+            </div>
+
+            <div>
+                <label>Número de documento</label>
+                <input type="text" id="Cedula" name="cedula" required>
+
+            </div>
+
+            <div>
+                <label>Fecha de nacimiento</label>
+                <input type="date" id="fechaNacimiento" name="fechaNacimiento"required >
+            </div>
+
+            <div>
+                <label>Género</label>
+                <select type="text" id="Genero" name="Genero" required>    
+                    <option>Masculino</option>
+                    <option>Femenino</option>
+                    <option>Otro</option>
+                </select>
+            </div>
+
+             <div>
+                <label>Ciudad</label>
+                <input type="text" id="Ciudad" name="ciudad" required>
+            </div>
+
+             <div>
+                <label>Cargo Profesional</label>
+                <input type="text" id="Cargo" name="cargo" autocomplete="organization-title" required>
+            </div>
+
+            <div>
+                <label>Nivel de Estudios</label>
+                <select id="Estudio" name="estudio" required>
+                    <option value="" disabled selected>Selecciona tu nivel de estudios...</option>
+                    <option value="primaria">Primaria</option>
+                    <option value="secundaria">Secundaria</option>
+                    <option value="bachillerato">Bachillerato o Preparatoria</option>
+                    <option value="tecnico o tecnologo">Técnico o Tecnólogo</option>
+                    <option value="universidad">Universidad / Licenciatura</option>
+                    <option value="posgrado">Posgrado / Maestría / Doctorado</option>
+                </select>
+            </div>
+
+             <div>
+                <label>Descripción</label>
+                <textarea type="text" id="Descripcion" name="Descripcion" required></textarea>
+            </div>
+
+            <div>
+                <label>Años de experiencia</label>
+                <select type="text" id="experiencia" name="experiencia" required>
+                    <option value="" disabled selected>Selecciona tu experiencia...</option>
+                    <option value="0-1">0-1 años</option>
+                    <option value="1-3">1-3 años</option>
+                    <option value="3-5">3-5 años</option>
+                    <option value="5+">5+ años</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Contraseña</label>
+                <input type="password" id="contraseña" name="password" autocomplete="new-password" required>
+            </div>
+
+            <div>
+                <label>Confirmar contraseña</label>
+                <input type="password" id="confirmar" name="confirmar" autocomplete="new-password" required>
+            </div>
+
+            <div>
+                <label>Hoja de vida (PDF)</label>
+                <input type="file" id="cv" name="cv" accept="application/pdf">
+            </div>
+        </div>
+
+           <div>    
+                <label>Tipo de cuenta</label>
+                <select id="rol" name="rol" required>
+                    <option value="" disabled selected>Seleccione una opción</option>
+                    <option value="CANDIDATO">CANDIDATO</option>
+                    <option value="EMPRESA">EMPRESA</option>
+                    <option value="ADMIN">ADMINISTRADOR</option>
+                </select>   
+            </div>
+
+            <div id="grupoCodigoAdmin" style="display:none;">
+                <label>Código de administrador</label>
+                <input type="password" id="codigoAdmin" name="codigoAdmin" autocomplete="off" placeholder="Solo para cuentas de administrador">
+            </div>
+
+          <button  id="botonRegistrarse"  type="button"  class="bntn bnt-primary" >Registrarse</button>
+    </form>
+
+    <p class="login-link">¿Ya tienes cuenta? <a href="sesion.html">Inicia sesión</a></p>
+</div>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+        <script src="js/registro.js"></script>
+        <script src="js/core.js"></script>
+
+</body>
+</html>

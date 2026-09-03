@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle de oferta - WorkSite</title>
+  <link rel="stylesheet" href="css/estadisticas.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">WorkSite</div>
+  <nav>
+    <a href="inicio 2.html" class="nav-link">Inicio</a>
+    <div class="menu-item" id="menuEstadisticas">
+      <a href="estadisticas.html" class="nav-link">📊 Estadísticas</a>
+    </div>
+    <div class="menu-item">
+      <a href="#" class="nav-link">
+        <div class="avatar" id="avatarInicial"></div>
+        <span class="arrow">▾</span>
+      </a>
+      <div class="submenu">
+        <a href="perfil.html"><span>👤</span> Mi perfil</a>
+        <a href="configuracion.html"><span>⚙️</span> Configuración</a>
+        <div class="divider-nav"></div>
+        <a id="botonCerrarSesion" class="danger"><span>🚪</span> Cerrar sesión</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="hero-banner">
+  <div class="hero-overlay">
+    <h1>📢 Detalle de la oferta</h1>
+    <p>Vista de administrador</p>
+  </div>
+</div>
+
+<main class="container">
+
+  <a href="estadisticas.html" class="est-btn-ver" style="display:inline-block; margin-bottom:20px;">← Volver a Estadísticas</a>
+
+  <div id="estadoCargando" class="est-empty-state">
+    <div class="est-empty-icon">⏳</div>
+    <p>Cargando oferta...</p>
+  </div>
+
+  <div id="estadoError" class="est-empty-state" style="display:none;">
+    <div class="est-empty-icon">🚫</div>
+    <p>No se pudo cargar la oferta.</p>
+  </div>
+
+  <section id="contenidoOferta" class="est-tabla-card" style="display:none; max-width:800px; margin:0 auto;">
+    <h2 id="tituloOferta" style="margin-top:0;"></h2>
+    <p id="empresaOferta" style="color:#666;"></p>
+
+    <table class="est-tabla">
+      <tbody>
+        <tr><td><strong>Estado</strong></td><td id="estadoOferta"></td></tr>
+        <tr><td><strong>Ubicación</strong></td><td id="ubicacionOferta"></td></tr>
+        <tr><td><strong>Modalidad</strong></td><td id="modalidadOferta"></td></tr>
+        <tr><td><strong>Jornada</strong></td><td id="jornadaOferta"></td></tr>
+        <tr><td><strong>Tipo de contrato</strong></td><td id="tipoContratoOferta"></td></tr>
+        <tr><td><strong>Salario</strong></td><td id="salarioOferta"></td></tr>
+        <tr><td><strong>Experiencia requerida</strong></td><td id="experienciaOferta"></td></tr>
+        <tr><td><strong>Nivel educativo</strong></td><td id="nivelEducativoOferta"></td></tr>
+        <tr><td><strong>Fecha de publicación</strong></td><td id="fechaPublicacionOferta"></td></tr>
+        <tr><td><strong>Fecha de cierre</strong></td><td id="fechaCierreOferta"></td></tr>
+        <tr><td><strong>Postulaciones recibidas</strong></td><td id="postulacionesOferta"></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Descripción</h3>
+    <p id="descripcionOferta"></p>
+
+    <h3>Responsabilidades</h3>
+    <p id="responsabilidadesOferta"></p>
+
+    <h3>Requisitos</h3>
+    <p id="requisitosOferta"></p>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 WorkSite | Todos los derechos reservados
+</footer>
+
+<script src="js/auth-guard.js"></script>
+<script>
+    requireAuth(["ADMIN"]);
+</script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="js/core.js"></script>
+<script>
+  $(document).ready(function () {
+    var idOferta = new URLSearchParams(window.location.search).get("id");
+
+    if (!idOferta) {
+      mostrarError();
+      return;
+    }
+
+    callApi(
+      API_BASE_URL + "/api/admin/ofertas/" + idOferta,
+      "GET",
+      null,
+      function (response) {
+        renderOferta(response);
+      },
+      function (error) {
+        console.error("Error al cargar la oferta:", error);
+        mostrarError();
+      }
+    );
+  });
+
+  function renderOferta(o) {
+    document.getElementById("tituloOferta").textContent = o.titulo || "-";
+    document.getElementById("empresaOferta").textContent = o.nombreEmpresa || "-";
+    document.getElementById("estadoOferta").textContent = o.estado || "-";
+    document.getElementById("ubicacionOferta").textContent = o.ubicacion || "-";
+    document.getElementById("modalidadOferta").textContent = o.modalidad || "-";
+    document.getElementById("jornadaOferta").textContent = o.jornada || "-";
+    document.getElementById("tipoContratoOferta").textContent = o.tipoDeContrato || "-";
+    document.getElementById("salarioOferta").textContent = o.salario ? ("$" + o.salario) : "-";
+    document.getElementById("experienciaOferta").textContent = o.experiencia || "-";
+    document.getElementById("nivelEducativoOferta").textContent = o.nivelEducativo || "-";
+    document.getElementById("fechaPublicacionOferta").textContent = o.fechaDePublicacion || "-";
+    document.getElementById("fechaCierreOferta").textContent = o.fechaDeCierre || "-";
+    document.getElementById("postulacionesOferta").textContent = o.postulaciones ?? "0";
+    document.getElementById("descripcionOferta").textContent = o.descripcion || "-";
+    document.getElementById("responsabilidadesOferta").textContent = o.responsabilidades || "-";
+    document.getElementById("requisitosOferta").textContent = o.requisitos || "-";
+
+    document.getElementById("estadoCargando").style.display = "none";
+    document.getElementById("contenidoOferta").style.display = "block";
+  }
+
+  function mostrarError() {
+    document.getElementById("estadoCargando").style.display = "none";
+    document.getElementById("estadoError").style.display = "block";
+  }
+</script>
+
+</body>
+</html>

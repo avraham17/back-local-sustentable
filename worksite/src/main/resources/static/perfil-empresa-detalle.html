@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil de empresa - WorkSite</title>
+  <link rel="stylesheet" href="css/estadisticas.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">WorkSite</div>
+  <nav>
+    <a href="inicio 2.html" class="nav-link">Inicio</a>
+    <div class="menu-item" id="menuEstadisticas">
+      <a href="estadisticas.html" class="nav-link">📊 Estadísticas</a>
+    </div>
+    <div class="menu-item">
+      <a href="#" class="nav-link">
+        <div class="avatar" id="avatarInicial"></div>
+        <span class="arrow">▾</span>
+      </a>
+      <div class="submenu">
+        <a href="perfil.html"><span>👤</span> Mi perfil</a>
+        <a href="configuracion.html"><span>⚙️</span> Configuración</a>
+        <div class="divider-nav"></div>
+        <a id="botonCerrarSesion" class="danger"><span>🚪</span> Cerrar sesión</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="hero-banner">
+  <div class="hero-overlay">
+    <h1>🏢 Perfil de la empresa</h1>
+    <p>Vista de administrador</p>
+  </div>
+</div>
+
+<main class="container">
+
+  <a href="estadisticas.html" class="est-btn-ver" style="display:inline-block; margin-bottom:20px;">← Volver a Estadísticas</a>
+
+  <div id="estadoCargando" class="est-empty-state">
+    <div class="est-empty-icon">⏳</div>
+    <p>Cargando perfil...</p>
+  </div>
+
+  <div id="estadoError" class="est-empty-state" style="display:none;">
+    <div class="est-empty-icon">🚫</div>
+    <p>No se pudo cargar el perfil de la empresa.</p>
+  </div>
+
+  <section id="contenidoPerfil" class="est-tabla-card" style="display:none; max-width:700px; margin:0 auto;">
+    <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
+      <img id="fotoEmpresa" src="" alt="Logo de la empresa" style="width:90px; height:90px; border-radius:50%; object-fit:cover; background:#eee; display:none;">
+      <div>
+        <h2 id="nombreEmpresa" style="margin:0;"></h2>
+        <p id="sectorEmpresa" style="margin:4px 0 0; color:#666;"></p>
+      </div>
+    </div>
+
+    <table class="est-tabla">
+      <tbody>
+        <tr><td><strong>Correo</strong></td><td id="correoEmpresa"></td></tr>
+        <tr><td><strong>Teléfono</strong></td><td id="telefonoEmpresa"></td></tr>
+        <tr><td><strong>Ubicación</strong></td><td id="ubicacionEmpresa"></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 WorkSite | Todos los derechos reservados
+</footer>
+
+<script src="js/auth-guard.js"></script>
+<script>
+    requireAuth(["ADMIN"]);
+</script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="js/core.js"></script>
+<script>
+  $(document).ready(function () {
+    var idEmpresa = new URLSearchParams(window.location.search).get("id");
+
+    if (!idEmpresa) {
+      mostrarError();
+      return;
+    }
+
+    callApi(
+      API_BASE_URL + "/api/admin/empresas/" + idEmpresa,
+      "GET",
+      null,
+      function (response) {
+        renderEmpresa(response);
+      },
+      function (error) {
+        console.error("Error al cargar la empresa:", error);
+        mostrarError();
+      }
+    );
+  });
+
+  function renderEmpresa(e) {
+    document.getElementById("nombreEmpresa").textContent = e.nombre || "-";
+    document.getElementById("sectorEmpresa").textContent = e.sector || "Sin sector especificado";
+    document.getElementById("correoEmpresa").textContent = e.correo || "-";
+    document.getElementById("telefonoEmpresa").textContent = e.telefono || "-";
+    document.getElementById("ubicacionEmpresa").textContent = e.ubicacion || "-";
+
+    if (e.foto) {
+      var img = document.getElementById("fotoEmpresa");
+      img.src = e.foto;
+      img.style.display = "block";
+    }
+
+    document.getElementById("estadoCargando").style.display = "none";
+    document.getElementById("contenidoPerfil").style.display = "block";
+  }
+
+  function mostrarError() {
+    document.getElementById("estadoCargando").style.display = "none";
+    document.getElementById("estadoError").style.display = "block";
+  }
+</script>
+
+</body>
+</html>

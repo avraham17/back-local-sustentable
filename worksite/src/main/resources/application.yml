@@ -1,0 +1,45 @@
+spring:
+  devtools:
+    add-properties: true
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+    database: ${MYSQL_DATABASE:version1-worksite}
+    host: ${MYSQL_HOST:localhost}
+    port: ${MYSQL_PORT:3306}
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:}
+    url: jdbc:mysql://${spring.datasource.host}:${spring.datasource.port}/${spring.datasource.database}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+  application:
+    name: worksite
+    admin:
+      enable: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:worksitesena@gmail.com}
+    password: ${MAIL_PASSWORD:ugrrovugoqrzcddw}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+worksite:
+  admin:
+    codigo: worksiteADMIN.2026
+
+  spring:
+    mvc:
+      favicon:
+        enabled: false
+
+server:
+  port: 8080

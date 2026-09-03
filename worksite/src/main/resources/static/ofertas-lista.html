@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ofertas - WorkSite</title>
+  <link rel="stylesheet" href="css/estadisticas.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">WorkSite</div>
+  <nav>
+    <a href="inicio 2.html" class="nav-link">Inicio</a>
+    <div class="menu-item" id="menuEstadisticas">
+      <a href="estadisticas.html" class="nav-link">📊 Estadísticas</a>
+    </div>
+    <div class="menu-item">
+      <a href="#" class="nav-link">
+        <div class="avatar" id="avatarInicial"></div>
+        <span class="arrow">▾</span>
+      </a>
+      <div class="submenu">
+        <a href="perfil.html"><span>👤</span> Mi perfil</a>
+        <a href="configuracion.html"><span>⚙️</span> Configuración</a>
+        <div class="divider-nav"></div>
+        <a id="botonCerrarSesion" class="danger"><span>🚪</span> Cerrar sesión</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="hero-banner">
+  <div class="hero-overlay">
+    <h1 id="tituloPagina">📢 Ofertas</h1>
+    <p>Listado de ofertas publicadas</p>
+  </div>
+</div>
+
+<main class="container">
+
+  <a href="estadisticas.html" class="est-btn-ver" style="display:inline-block; margin-bottom:20px;">← Volver a Estadísticas</a>
+
+  <div class="est-tabla-card">
+    <div class="est-tabla-header">
+      <h2 class="est-chart-title">Ofertas</h2>
+      <input type="text" id="buscarOferta" class="est-buscador" placeholder="Buscar oferta...">
+    </div>
+    <div class="est-tabla-wrapper">
+      <table class="est-tabla" id="tablaOfertas">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Empresa</th>
+            <th>Estado</th>
+            <th>Postulaciones</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="cuerpoTablaOfertas">
+          <!-- Filas generadas dinámicamente -->
+        </tbody>
+      </table>
+      <p class="est-tabla-vacia" id="vacioOfertas" style="display:none;">No hay ofertas registradas.</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  © 2026 WorkSite | Todos los derechos reservados
+</footer>
+
+<script src="js/auth-guard.js"></script>
+<script>
+    requireAuth(["ADMIN"]);
+</script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="js/core.js"></script>
+<script>
+  // Filtro opcional por URL, ej: ofertas-lista.html?estado=activa
+  var filtroEstado = new URLSearchParams(window.location.search).get("estado");
+
+  $(document).ready(function () {
+    if (filtroEstado) {
+      document.getElementById("tituloPagina").textContent = "🟢 Ofertas activas";
+    }
+
+    cargarOfertas();
+
+    document.getElementById('buscarOferta').addEventListener('input', function (e) {
+      var filtro = e.target.value.toLowerCase();
+      document.querySelectorAll('#cuerpoTablaOfertas tr').forEach(function (fila) {
+        fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? '' : 'none';
+      });
+    });
+  });
+
+  function cargarOfertas() {
+    callApi(API_BASE_URL + "/api/admin/ofertas", "GET", null,
+      function (response) {
+        console.log("RESPUESTA OFERTAS:",response);
+
+        var datos = Array.isArray(response) ? response :(response.data || []);
+        if (filtroEstado) {
+          datos = datos.filter(function (o) {
+            return (o.estado || "").toLowerCase() === filtroEstado.toLowerCase();
+          });
+        }
+        renderOfertas(datos);
+      },
+      function (error) {
+        console.error("Error al cargar ofertas:", error);
+      }
+    );
+  }
+
+  function renderOfertas(datos) {
+    var cuerpo = document.getElementById('cuerpoTablaOfertas');
+    cuerpo.innerHTML = '';
+    document.getElementById('vacioOfertas').style.display = datos.length ? 'none' : 'block';
+
+    datos.forEach(function (o) {
+      cuerpo.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td>${o.titulo}</td>
+          <td>${o.empresa}</td>
+          <td>${o.estado}</td>
+          <td>${o.postulaciones}</td>
+          <td><a href="detalle-oferta.html?id=${o.id}" class="est-btn-ver">Ver detalle</a></td>
+        </tr>`);
+    });
+  }
+</script>
+
+</body>
+</html>
