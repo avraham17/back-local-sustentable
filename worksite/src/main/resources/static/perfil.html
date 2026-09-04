@@ -91,11 +91,7 @@
 
     <div class="acciones">
       <button class="secundario" id="btneditar">Editar</button>
-    
     </div>
-     <br>
-        <button class="danger" id="btneliminar">Eliminar</button>
-      </div>
   </section>
 
   <section class="datos" id="seccionPostulaciones" style="display:none;">
@@ -168,8 +164,28 @@
         <textarea id="editDescripcion" class="form-control mb-2" placeholder="Cuéntanos sobre ti..."></textarea>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-danger me-auto" id="btneliminar">🗑️ Eliminar perfil</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         <button type="button" class="btn btn-primary" id="guardarEdicion">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: confirmar eliminación (reemplaza el confirm() nativo) -->
+<div class="modal fade" id="modalConfirmarEliminar" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">¿Eliminar tu perfil?</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p>Esta acción no se puede deshacer. Se eliminará tu perfil y perderás el acceso a tus postulaciones.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Sí, eliminar</button>
       </div>
     </div>
   </div>
@@ -187,8 +203,9 @@
   integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
   crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="js/perfil.js"></script>
 <script src="js/core.js"></script>
+<script src="js/perfil.js"></script>
+
 
 </body>
 </html>

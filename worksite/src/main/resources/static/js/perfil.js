@@ -121,10 +121,36 @@ var fotoBase64Nueva = null;
         });
 
         $("#btneliminar").on("click", function () {
-            var correo = $("#mostrarCorreo").text(); 
-            
-            if(confirm("¿Estás seguro de eliminar tu perfil?")) {
-                deleteData(correo);
+            // Cerramos el modal de edición antes de abrir el de confirmación,
+            // para no apilar el confirm() nativo (o dos modales) uno encima del otro.
+            var modalEditar = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+            if (modalEditar) modalEditar.hide();
+
+            // Pequeño delay para dejar terminar la animación de cierre de Bootstrap
+            // antes de mostrar el siguiente modal (evita que se encimen los fondos oscuros).
+            setTimeout(function () {
+                var modalConfirmar = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalConfirmarEliminar'));
+                modalConfirmar.show();
+            }, 300);
+        });
+
+        $("#confirmarEliminarBtn").on("click", function () {
+            var correo = $("#mostrarCorreo").text();
+
+            var modalConfirmar = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarEliminar'));
+            if (modalConfirmar) modalConfirmar.hide();
+
+            deleteData(correo);
+        });
+
+        // Los navegadores bloquean la navegación directa a una URL "data:" en una
+        // pestaña nueva (por seguridad, para evitar phishing). Con la foto no pasa
+        // porque ahí solo se usa como src de una <img>, no como navegación de página.
+        // Por eso el CV hay que convertirlo a un Blob real antes de abrirlo.
+        $("#enlaceCv").on("click", function (e) {
+            e.preventDefault();
+            if (usuarioActual && usuarioActual.cv) {
+                abrirCv(usuarioActual.cv);
             }
         });
 
@@ -272,4 +298,24 @@ function guardarCvAutomatico(cvBase64) {
         },
         cbError
     );
+}
+
+function abrirCv(cvDataUrl) {
+    try {
+        var partes = cvDataUrl.split(",");
+        var base64 = partes.length > 1 ? partes[1] : partes[0];
+        var binario = atob(base64);
+        var bytes = new Uint8Array(binario.length);
+
+        for (var i = 0; i < binario.length; i++) {
+            bytes[i] = binario.charCodeAt(i);
+        }
+
+        var blob = new Blob([bytes], { type: "application/pdf" });
+        var url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+    } catch (err) {
+        console.error("No se pudo abrir el CV:", err);
+        alert("No se pudo abrir la hoja de vida.");
+    }
 }

@@ -1,5 +1,4 @@
 package edu.co.sena.worksite.services;
-
 import edu.co.sena.worksite.dtos.*;
 import edu.co.sena.worksite.entities.OfertaEntity;
 import edu.co.sena.worksite.entities.PostulacionEntity;
@@ -59,15 +58,15 @@ public class PostulacionService {
 
         emailService.enviarCorreoHtml(candidato.getCorreoElectronico(), "Postulación recibida", cuerpoCandidato);
 
-        // Correo nuevo: notificar a la empresa
-        if (oferta.getEmpresa() != null && oferta.getEmpresa().getCorreo() != null) {
+
+        if (hayMatch(candidato, oferta) && oferta.getEmpresa() != null && oferta.getEmpresa().getCorreo() != null) {
             String cuerpoEmpresa = EmailTemplateBuilder.construir(
-                    "Nuevo candidato postulado",
+                    "Candidato compatible con tu oferta",
                     "Hola <strong>" + oferta.getEmpresa().getNombre() + "</strong>,",
-                    "El candidato <strong>" + candidato.getNombres() + " " + candidato.getApellidos() + "</strong> se ha postulado a tu oferta: <strong>" + oferta.getTitulo() + "</strong>. Ingresa a WorkSite para revisar su perfil.",
+                    "El candidato <strong>" + candidato.getNombres() + " " + candidato.getApellidos() + "</strong> se ha postulado a tu oferta <strong>" + oferta.getTitulo() + "</strong> y su cargo coincide con el perfil que buscas. Ingresa a WorkSite para revisar su perfil.",
                     "#1e3a8a"
             );
-            emailService.enviarCorreoHtml(oferta.getEmpresa().getCorreo(), "Nuevo candidato postulado", cuerpoEmpresa);
+            emailService.enviarCorreoHtml(oferta.getEmpresa().getCorreo(), "Candidato compatible con tu oferta", cuerpoEmpresa);
         }
         return true;
     }
@@ -157,6 +156,13 @@ public class PostulacionService {
         }
     }
 
+
+    private boolean hayMatch(ResgistroUsuarioEntity candidato, OfertaEntity oferta) {
+        if (candidato.getCargo() == null || oferta.getTitulo() == null) {
+            return false;
+        }
+        return candidato.getCargo().trim().equalsIgnoreCase(oferta.getTitulo().trim());
+    }
 
     private void validateEsPropietarioDeOferta(PostulacionEntity postulacion){
         if (AuthUtils.tieneRol("ADMIN")) return;

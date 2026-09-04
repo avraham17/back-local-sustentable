@@ -375,10 +375,26 @@ $(function () {
     });
 
     $("#btneliminar").on("click", function () {
+        // Cerramos el modal de edición antes de abrir el de confirmación,
+        // para no apilar el confirm() nativo (o dos modales) uno encima del otro.
+        var modalEditar = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+        if (modalEditar) modalEditar.hide();
+
+        // Pequeño delay para dejar terminar la animación de cierre de Bootstrap
+        // antes de mostrar el siguiente modal (evita que se encimen los fondos oscuros).
+        setTimeout(function () {
+            var modalConfirmar = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalConfirmarEliminar'));
+            modalConfirmar.show();
+        }, 300);
+    });
+
+    $("#confirmarEliminarBtn").on("click", function () {
         var correo = $("#mostrarCorreo").text();
-        if (confirm("¿Estás seguro de eliminar tu perfil? Esta acción no se puede deshacer.")) {
-            deleteData(correo);
-        }
+
+        var modalConfirmar = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarEliminar'));
+        if (modalConfirmar) modalConfirmar.hide();
+
+        deleteData(correo);
     });
 
     $("#guardarCambios").on("click", function () {

@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // Recursos estáticos del frontend: html, css, js, imágenes, fuentes, favicon
-                        // (se incluyen variantes con mayúscula porque el proyecto mezcla "js/" y "Js/")
+
                         .requestMatchers(HttpMethod.GET,
                                 "/", "/*.html", "/**/*.html",
                                 "/css/**", "/Css/**",
@@ -59,7 +59,6 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/oferta/**").permitAll()
 
-                        // Todo lo demás requiere un token válido
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -77,11 +76,6 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return new InMemoryUserDetailsManager();
     }
-
-    // ojo en desarrollo, "*" (cualquier origen). En  producción debemos, sobrescribir
-    // en application.properties con el/los dominio(s) reales del frontend, ej:
-    // worksite.cors.origenes=https://tuapp.com,https://www.tuapp.com
-
 
     @Value("${worksite.cors.origenes:*}")
     private String origenesPermitidos;

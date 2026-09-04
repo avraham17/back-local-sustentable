@@ -1,9 +1,10 @@
 package edu.co.sena.worksite.services;
-
 import edu.co.sena.worksite.dtos.*;
+import edu.co.sena.worksite.entities.OfertaEntity;
 import edu.co.sena.worksite.entities.ResgistroUsuarioEntity;
 import edu.co.sena.worksite.entities.RolEntity;
 import edu.co.sena.worksite.exceptions.ResourceNotFoundException;
+import edu.co.sena.worksite.respositories.OfertaRepository;
 import edu.co.sena.worksite.respositories.ResgistroUsuarioRepository;
 import edu.co.sena.worksite.respositories.RolRepository;
 import edu.co.sena.worksite.security.AuthUtils;
@@ -23,6 +24,9 @@ public class ResgistroUsuarioService {
     private ResgistroUsuarioRepository repository;
 
     @Autowired
+    private OfertaRepository ofertaRepository;
+
+    @Autowired
     private RolRepository rolRepository;
 
     @Autowired
@@ -34,27 +38,19 @@ public class ResgistroUsuarioService {
     @Autowired
     private EmailService emailService;
 
-    // Se define en application.properties (o como variable de entorno), NUNCA
-    // en el código ni en el frontend. Si no está configurado, el registro como
-    // ADMIN queda bloqueado por seguridad (valor vacío nunca puede "coincidir").
+
     @Value("${worksite.admin.codigo:}")
     private String codigoAdminEsperado;
 
-    /**
-     * Si el registro pide el rol ADMIN, exige que venga un código secreto que
-     * coincida con el configurado en el servidor (application.properties /
-     * variable de entorno). Así, aunque alguien llame directo a la API (sin
-     * pasar por el formulario), no puede crear una cuenta de administrador.
-     */
+
     private void validarCodigoAdminSiAplica(ResgistroUsuarioRequestDto dto) {
         String rolSolicitado = dto.getRolNombre();
         if (rolSolicitado == null || !rolSolicitado.equalsIgnoreCase("ADMIN")) {
-            return; // no es un registro de administrador, no aplica esta validación
+            return;
         }
 
         if (codigoAdminEsperado == null || codigoAdminEsperado.isBlank()) {
-            // No hay código configurado en el servidor: por seguridad, se bloquea
-            // el registro como ADMIN en vez de permitirlo "por defecto".
+
             throw new AccessDeniedException("El registro como administrador no está habilitado");
         }
 
@@ -75,6 +71,8 @@ public class ResgistroUsuarioService {
                 correoHtml
         );
 
+        notificarEmpresasCompatibles(entity);
+
         String rolNombre = entity.getRolNombre() != null ? entity.getRolNombre().getRolNombre() : null;
         String token = jwtUtil.generarToken(entity.getId(), entity.getCorreoElectronico(), rolNombre);
 
@@ -85,6 +83,38 @@ public class ResgistroUsuarioService {
                 .correoElectronico(entity.getCorreoElectronico())
                 .rolNombre(rolNombre)
                 .build();
+    }
+
+    private void notificarEmpresasCompatibles(ResgistroUsuarioEntity candidato) {
+        if (candidato.getCargo() == null || candidato.getCargo().isBlank()) return;
+
+        String cargoCandidato = candidato.getCargo().trim().toLowerCase();
+        if (cargoCandidato.isEmpty()) return;
+
+        List<OfertaEntity> todasLasOfertas = ofertaRepository.findAll();
+
+        for (OfertaEntity oferta : todasLasOfertas) {
+            if (oferta.getTitulo() == null) continue;
+            if (oferta.getEmpresa() == null || oferta.getEmpresa().getCorreo() == null) continue;
+
+            String tituloOferta = oferta.getTitulo().trim().toLowerCase();
+            if (tituloOferta.isEmpty()) continue;
+
+            if (tituloOferta.contains(cargoCandidato)) {
+                String cuerpo = EmailTemplateBuilder.construir(
+                        "Candidato compatible con tu oferta",
+                        "Hola <strong>" + oferta.getEmpresa().getNombre() + "</strong>,",
+                        "El candidato <strong>" + candidato.getNombres() + " " + candidato.getApellidos() + "</strong> tiene un perfil que coincide con tu oferta: <strong>" + oferta.getTitulo() + "</strong>. Ingresa a WorkSite para revisar su perfil.",
+                        "#1e3a8a"
+                );
+
+                emailService.enviarCorreoHtml(
+                        oferta.getEmpresa().getCorreo(),
+                        "Candidato compatible con tu oferta: " + oferta.getTitulo(),
+                        cuerpo
+                );
+            }
+        }
     }
 
     public List<ResgistroUsuarioListResponseDto> getAll(){
@@ -201,6 +231,7 @@ public class ResgistroUsuarioService {
         }
 
         repository.save(e);
+        notificarEmpresasCompatibles(e);
         return true;
     }
 
